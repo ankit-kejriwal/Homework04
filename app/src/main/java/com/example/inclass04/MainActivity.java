@@ -5,9 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,42 +22,78 @@ public class MainActivity extends AppCompatActivity {
     SeekBar drag;
     Button generate;
     ProgressDialog progressDialog;
+    int step = 1;
+    int maxvalue = 10;
+    int minValue = 0;
+    int complexityValue = 0;
+    double minDisplay = 0;
+    double maxDisplay = 0;
+    double avgDisplay = 0;
+    ArrayList<Double> arrList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("InClass04");
 
-        min = findViewById(R.id.textViewMin);
-        max = findViewById(R.id.textViewMax);
-        avg = findViewById(R.id.textViewAvg);
+        min = findViewById(R.id.textViewMinDisplay);
+        max = findViewById(R.id.textViewMaxDisplay);
+        avg = findViewById(R.id.textViewAvgDisplay);
         drag = findViewById(R.id.seekBar);
+        drag.setMax( (maxvalue - minValue) / step );
         generate = findViewById(R.id.buttonGenerate);
-        new DoworKAsync().execute(100);
+        drag.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                complexityValue = minValue + (i * 1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        generate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("demo",complexityValue+"");
+                arrList = HeavyWork.getArrayNumbers(complexityValue);
+                Log.d("demo",arrList+"");
+                new DoworKAsync().execute(arrList);
+            }
+        });
     }
 
-    class DoworKAsync extends AsyncTask<Integer, Integer, Double>{
+
+    class DoworKAsync extends AsyncTask<ArrayList<Double>, Integer, Double>{
 
         @Override
-        protected Double doInBackground(Integer... integers) {
-            double sum = 0.0;
-            double count = 0 , average = 0.0;
-            for(int i=0;i<100;i++) {
-                for (int j = 0; j < 10000000; j++) {
-                    count++;
-                    sum += j;
-                }
+        protected Double doInBackground(ArrayList<Double>... arrayLists) {
+            minDisplay = Collections.min(arrayLists[0]);
+            maxDisplay = Collections.max(arrayLists[0]);
+            double sum =0;
+            for(int i=0 ;i< arrayLists[0].size();i++) {
                 publishProgress(i);
+                sum += arrayLists[0].get(i);
             }
-            average = sum/count;
-            return average;
+            avgDisplay = sum /arrayLists[0].size();
+            Log.d("demo",minDisplay+"");
+            Log.d("demo",maxDisplay+"");
+            Log.d("demo",avgDisplay+"");
+
+            return null;
         }
 
         @Override
         protected void onPreExecute() {
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setMessage("Updating Progress");
-            progressDialog.setMax(100);
+            progressDialog.setMax(10);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -61,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Double aDouble) {
             progressDialog.dismiss();
+            min.setText(minDisplay+"");
+            max.setText(maxDisplay+"");
+            avg.setText(avgDisplay+"");
+
         }
 
         @Override
