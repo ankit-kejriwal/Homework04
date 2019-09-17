@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("demo",complexityValue+"");
                 arrList = HeavyWork.getArrayNumbers(complexityValue);
-                Log.d("demo",arrList+"");
                 new DoworKAsync().execute(arrList);
             }
         });
