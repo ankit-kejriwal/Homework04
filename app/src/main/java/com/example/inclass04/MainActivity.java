@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 complexityValue = minValue + (i * 1);
                 count.setText(complexityValue + " Times");
+
             }
 
             @Override
@@ -66,7 +68,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("demo",complexityValue+"");
                 arrList = HeavyWork.getArrayNumbers(complexityValue);
-                new DoworKAsync().execute(arrList);
+                if(complexityValue > 0) {
+                    new DoworKAsync().execute(arrList);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please drag seekbar", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
