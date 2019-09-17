@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     TextView min;
     TextView max;
     TextView avg;
+    TextView count;
     SeekBar drag;
     Button generate;
     ProgressDialog progressDialog;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         min = findViewById(R.id.textViewMinDisplay);
         max = findViewById(R.id.textViewMaxDisplay);
         avg = findViewById(R.id.textViewAvgDisplay);
+        count = findViewById(R.id.textViewCount);
         drag = findViewById(R.id.seekBar);
         drag.setMax( (maxvalue - minValue) / step );
         generate = findViewById(R.id.buttonGenerate);
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 complexityValue = minValue + (i * 1);
+                count.setText(complexityValue + " Times");
             }
 
             @Override
